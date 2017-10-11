@@ -42,7 +42,7 @@ public class UrlCache {
      * @throws IOException if encounters any errors/exceptions
      */
 	@SuppressWarnings("unchecked")
-	public UrlCache() throws IOException {
+	public UrlCache(boolean ignoreCatalogue) throws IOException {
 		
 		
 			System.out.println("WE BRANCHING");
@@ -65,6 +65,9 @@ public class UrlCache {
 				System.out.println("Error: " + e.getMessage());
 			}
 
+			
+			if(ignoreCatalogue)
+				catalogue = new HashMap<String, String>();
 	}
 	
     /**
@@ -73,10 +76,12 @@ public class UrlCache {
      * @param url	URL of the object to be downloaded. It is a fully qualified URL.
      * @throws IOException if encounters any errors/exceptions
      */
-	public void getObject(String url) throws IOException {
+	public int getObject(String url) throws IOException {
 
 		String line = "";
 		PrintWriter outputStream;
+		
+		int counter = 0; //keeps track of amount of bytes read
 		
 		URLUtilityClass urlUtility = new URLUtilityClass(url);
 
@@ -137,6 +142,9 @@ public class UrlCache {
 			headScanner.close();
 
 
+			System.out.println(objectLength);
+			
+			
 			if(http_response_header_string.contains("304 Not Modified")) {
 				//Do nothing, page has not been modified since the last time it was downloaded
 				System.out.println(url + " - File already in local cache, not downloading");
@@ -152,7 +160,7 @@ public class UrlCache {
 				FileOutputStream fos = new FileOutputStream(f);
 				//fos.close();
 
-				int counter = 0; //keeps track of amount of bytes read
+	
 				int num_byte_read = 0;
 				
 				while(num_byte_read != -1) {
@@ -205,6 +213,7 @@ public class UrlCache {
 		
 		System.out.println("------------------------------------------");
 
+		return counter;
 	}
 	
     /**
