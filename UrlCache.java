@@ -74,29 +74,17 @@ public class UrlCache {
      * @throws IOException if encounters any errors/exceptions
      */
 	public void getObject(String url) throws IOException {
-		
-		
-		//Variable initialization
-		String hostName;
-		String pathName;
-		int portNumber = 80; //Initialize portNumber to default: 80
-		
-		String line = "";
-		
-		PrintWriter outputStream;
 
-		/* url String Parsing */
-		hostName = url.substring(0, url.indexOf("/"));
-		pathName = url.substring(url.indexOf("/"));
+		String line = "";
+		PrintWriter outputStream;
 		
-		
-		
-		//If URL has colon, grab port-number
-		if(url.indexOf(":") != -1) {
-			hostName = url.substring(0, url.indexOf(":"));
-			portNumber = Integer.parseInt(url.substring(url.indexOf(":") + 1, url.indexOf("/")));
-			
-		}
+		URLUtilityClass urlUtility = new URLUtilityClass(url);
+
+		/* URL String Parsing */
+		String hostName = urlUtility.getHostName();
+		String pathName = urlUtility.getPathName();
+		int portNumber = urlUtility.getPortNumber();
+
 
 		try {
 			// connects to port server app listening at port 8888 in the same
