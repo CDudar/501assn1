@@ -44,6 +44,7 @@ public class UrlCache {
 	@SuppressWarnings("unchecked")
 	public UrlCache() throws IOException {
 		
+			System.out.println("test");
 		
 			//attempt to open the local cache
 			//if it exists, load in the url keys and lastModified vals into the catalogue
