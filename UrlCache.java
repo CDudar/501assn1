@@ -46,7 +46,6 @@ public class UrlCache {
 		
 			System.out.println("testsssssadasdsssss");
 			System.out.println("branch");
-			System.out.println("is this rev1");
 		
 			//attempt to open the local cache
 			//if it exists, load in the url keys and lastModified vals into the catalogue
