@@ -44,7 +44,8 @@ public class UrlCache {
 	@SuppressWarnings("unchecked")
 	public UrlCache() throws IOException {
 		
-			System.out.println("testsssssadasdsssss");
+		
+			System.out.println("WE BRANCHING");
 			System.out.println("branch");
 		
 			//attempt to open the local cache
