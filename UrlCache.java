@@ -45,9 +45,6 @@ public class UrlCache {
 	public UrlCache(boolean ignoreCatalogue) throws IOException {
 		
 		
-			System.out.println("WE BRANCHING");
-			System.out.println("branch");
-		
 			//attempt to open the local cache
 			//if it exists, load in the url keys and lastModified vals into the catalogue
 			try {
@@ -78,10 +75,10 @@ public class UrlCache {
      */
 	public int getObject(String url) throws IOException {
 
-		String line = "";
+	
 		PrintWriter outputStream;
 		
-		int counter = 0; //keeps track of amount of bytes read
+		int totalBytesRead = 0; //keeps track of amount of bytes read
 		
 		URLUtilityClass urlUtility = new URLUtilityClass(url);
 
@@ -116,10 +113,7 @@ public class UrlCache {
 			outputStream.print("\r\n");
 			outputStream.flush();
 
-			
-			//Initialize byte list to hold object data
-			byte[] http_object_bytes = new byte[4096];
-			
+		
 			/*read-in http header */
 			String http_response_header_string = getHTTPHeader(socket);
 
@@ -128,6 +122,8 @@ public class UrlCache {
 			String lastModified = "";
 			int objectLength = 0;
 			
+			
+			String line = "";
 			//parse out last-modified and content-length values from header
 			while(headScanner.hasNextLine()) {
 				line = headScanner.nextLine();
@@ -144,7 +140,6 @@ public class UrlCache {
 
 			System.out.println(objectLength);
 			
-			
 			if(http_response_header_string.contains("304 Not Modified")) {
 				//Do nothing, page has not been modified since the last time it was downloaded
 				System.out.println(url + " - File already in local cache, not downloading");
@@ -158,53 +153,18 @@ public class UrlCache {
 				File f = new File(hostName + pathName);
 				f.getParentFile().mkdirs();
 				FileOutputStream fos = new FileOutputStream(f);
-				//fos.close();
-
-	
-				int num_byte_read = 0;
 				
-				while(num_byte_read != -1) {
-					
-					//read in bytes until the entire objects size has been read in
-					if(counter == objectLength) {
-						break;
-					}	
-					//read some amount of bytes and write them to file output stream
-					try {
-					num_byte_read = socket.getInputStream().read(http_object_bytes);
-					fos.write(http_object_bytes);
-					fos.flush();
-					fos.getFD().sync();
-					}
-					catch(IOException e) {
-						System.out.println("Error downloading document, IOEXCEPTION");
-					}
-
-					
-					//increment counter by how many bytes were read for this iteration
-					counter+= num_byte_read;
-					
-				}
-
 				
-				fos.close();
+				totalBytesRead = saveObject(socket, fos, objectLength);
 				
 				
 				//populate catalogue with url key and lastmodified value
 				catalogue.put(url, lastModified);
-					
-				//Write and save the catalogue into a local file
-				FileOutputStream fosObj = new FileOutputStream("catalogueFile.ser");
-				ObjectOutputStream oos = new ObjectOutputStream(fosObj);
-				oos.writeObject(catalogue);
-				oos.flush();
-				oos.close();
+				saveCatalogue(catalogue);
 						
 			}
 			
-			
 			socket.close();
-
 				
 		}
 		catch (Exception e) {
@@ -213,7 +173,7 @@ public class UrlCache {
 		
 		System.out.println("------------------------------------------");
 
-		return counter;
+		return totalBytesRead;
 	}
 	
     /**
@@ -268,6 +228,65 @@ public class UrlCache {
 		
 		//return header string
 		return http_response_header_string;
+	}
+	
+	
+	public void saveCatalogue(HashMap<String, String> catalogue) {
+		try {
+			
+			FileOutputStream fosObj = new FileOutputStream("catalogueFile.ser");
+			ObjectOutputStream oos = new ObjectOutputStream(fosObj);
+			oos.writeObject(catalogue);
+			oos.flush();
+			oos.close();
+		
+		}
+		catch(FileNotFoundException e) {
+			System.out.println("Error: " + e.getMessage());
+		}
+		catch(IOException e) {
+			System.out.println("Error "+ e.getMessage());
+		}
+	}
+	
+	
+	public int saveObject(Socket socket, FileOutputStream fos, int objectLength) throws IOException {
+
+		
+		//Initialize byte list to hold object data
+		byte[] http_object_bytes = new byte[4096];
+
+		int totalBytesRead = 0;
+		int num_byte_read = 0;
+		
+		while(num_byte_read != -1) {
+			
+			//read in bytes until the entire objects size has been read in
+			if(totalBytesRead == objectLength) {
+				break;
+			}	
+			//read some amount of bytes and write them to file output stream
+			try {
+			num_byte_read = socket.getInputStream().read(http_object_bytes);
+			fos.write(http_object_bytes);
+			fos.flush();
+			fos.getFD().sync();
+			}
+			catch(IOException e) {
+				System.out.println("Error downloading document, IOEXCEPTION");
+			}
+
+			
+			//increment total bytes by how many bytes were read for this iteration
+			totalBytesRead+= num_byte_read;
+			
+		}
+		fos.close();
+		
+		return totalBytesRead;
+		
+		
+		
 	}
 	
 	
