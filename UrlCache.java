@@ -72,7 +72,7 @@ public class UrlCache {
      * @throws IOException if encounters any errors/exceptions
      */
 	public void getObject(String url) throws IOException {
-		
+		System.out.println("bad code smell duude");
 		
 		//Variable initialization
 		String hostName;
