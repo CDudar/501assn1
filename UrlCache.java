@@ -76,19 +76,10 @@ public class UrlCache {
      * @param url	URL of the object to be downloaded. It is a fully qualified URL.
      * @throws IOException if encounters any errors/exceptions
      */
-<<<<<<< HEAD
-	public int getObject(String url) throws IOException {
 
-=======
-	public void getObject(String url) throws IOException {
+	public int getObject(String url) throws IOException {
 		System.out.println("bad code smell duude");
-		
-		//Variable initialization
-		String hostName;
-		String pathName;
-		int portNumber = 80; //Initialize portNumber to default: 80
-		
->>>>>>> master
+
 		String line = "";
 		PrintWriter outputStream;
 		
