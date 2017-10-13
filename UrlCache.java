@@ -150,9 +150,9 @@ public class UrlCache {
 				System.out.println("Downloading - " + url);
 				
 				//Recreating directory structure locally
-				File f = new File(hostName + pathName);
-				f.getParentFile().mkdirs();
-				FileOutputStream fos = new FileOutputStream(f);
+				File objectFile = new File(hostName + pathName);
+				objectFile.getParentFile().mkdirs();
+				FileOutputStream fos = new FileOutputStream(objectFile);
 				
 				
 				totalBytesRead = saveObject(socket, fos, objectLength);
