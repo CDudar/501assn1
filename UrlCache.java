@@ -176,28 +176,7 @@ public class UrlCache {
 		return totalBytesRead;
 	}
 	
-    /**
-     * Returns the Last-Modified time associated with the object specified by the parameter url.
-	 *
-     * @param url 	URL of the object 
-	 * @return the Last-Modified time in millisecond as in Date.getTime()
-     */
-	public long getLastModified(String url) throws RuntimeException {
-		
-		if(catalogue.containsKey(url)) {
-			String lastModified = catalogue.get(url);
-			SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss zzz");
-			Date date = format.parse(lastModified, new ParsePosition(0));
-			long millis = date.getTime();
-			return millis;
-		}
-		else {
-			throw new RuntimeException();
-		}
 
-
-	}
-	
 	
 	public String getHTTPHeader(Socket socket) throws IOException {
 		
